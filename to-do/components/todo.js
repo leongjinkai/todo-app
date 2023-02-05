@@ -20,7 +20,7 @@ export default function Todo({todo, todos, setTodos, showInputEl, setShowInputEl
     }
 
     return (
-        <div className="flex justify-between bg-white py-3  px-5 m-2 rounded-xl w-[100vw] max-w-lg shadow-lg mx-auto">
+        <div className="flex justify-between bg-white py-3 px-5 m-2 rounded-xl w-[80vw] max-w-lg shadow-lg mx-auto">
             <div className="flex items-center">
                 <span className="break-words overflow-y-auto" style={{textDecoration: todo.completed ? "line-through" : ""}}>
                     {showInputEl ? (

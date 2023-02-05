@@ -57,8 +57,8 @@ export default function Home() {
         {/* Background */}
         <div className='bg-gradient-to-br from-cyan-500 to-blue-500 h-[100vh] flex flex-col justify-center'>
           {/* header */}
-          <div className='mx-auto font-mono text-3xl m-5'>
-            <p className='font-bold text-center text-7xl'>Jin Kai's</p><p className='text-center mt-2'>To-do App</p>
+          <div className='mx-auto font-mono text-2xl m-5'>
+            <p className='font-bold text-center text-7xl'>JinKai's</p><p className='text-center mt-2'>To-do App</p>
           </div>
 
           {/* Form input to add To-do */}
