@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
-import Todo from './components/todo'
+import Todo from '../components/todo'
 import { db } from '@/firebase'
 import { query, doc, collection, onSnapshot, addDoc, deleteDoc } from 'firebase/firestore'
 

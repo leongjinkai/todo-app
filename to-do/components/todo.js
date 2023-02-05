@@ -1,7 +1,7 @@
 import { db } from "@/firebase"
 import { doc, updateDoc } from "firebase/firestore"
 
-export default function Todo({todo, index, todos, setTodos, showInputEl, setShowInputEl, deleteTodo}) {
+export default function Todo({todo, todos, setTodos, showInputEl, setShowInputEl, deleteTodo}) {
     const toggleComplete = async (todo) => {
         await updateDoc(doc(db, 'todos', todo.id), {
             completed: !todo.completed
