@@ -16,13 +16,13 @@ export default function Nav() {
                 </Link>
                 )}
                 {user && (
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-3">
                     {user && (
-                        <button className="bg-[#c60f7b] p-3 rounded-xl font-mono font-bold text-white" onClick={() => {
+                        <button className="bg-[#c60f7b] p-3 text-sm rounded-xl font-mono font-bold text-white" onClick={() => {
                             auth.signOut()
                         }}>Sign out</button>
                     )}
-                    <h2>{user.displayName}</h2>
+                    <h2 className="text-sm">{user.displayName}</h2>
                     <Link href={"/mainapp"}>
                         <img className="rounded-full w-12" src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
                     </Link>

@@ -75,8 +75,8 @@ export default function Mainapp() {
           {/* Form input to add To-do */}
           <div className='mx-auto my-3'>
             <form onSubmit={createToDo} className='flex flex-col items-center gap-3'>
-              <input className='placeholder:font-mono placeholder:text-center p-2' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
-              <button className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono' type='submit'>Submit</button>
+              <input className='placeholder:font-mono placeholder:text-center p-2 mb-2' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
+              <button className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3' type='submit'>Submit</button>
             </form>
           </div>
 
