@@ -84,10 +84,10 @@ export default function Home() {
           ))}
           <div>
             {todos.length === 0 ? 
-              <div className='text-center font-mono'>
+              <div className='text-center font-mono my-2'>
                 Hurray!! You have completed all your tasks!<br/>You can add a task above by entering into the text field
               </div>:
-              <div className='text-center font-mono text-white'>
+              <div className='text-center font-mono text-white my-2'>
                 You have {todos.length} tasks!
               </div>
             }
