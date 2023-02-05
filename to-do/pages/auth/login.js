@@ -20,6 +20,7 @@ export default function Login() {
         }
     }
 
+    // If user is not logged in and comes to this page, they get routed
     useEffect(() => {
         if (user) {
             route.push('/mainapp')

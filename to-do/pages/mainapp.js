@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Todo from '../components/todo'
 import { db } from '@/firebase'
-import { query, doc, collection, onSnapshot, addDoc, deleteDoc } from 'firebase/firestore'
+import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc } from 'firebase/firestore'
 import { auth } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
@@ -26,7 +26,8 @@ export default function Mainapp() {
     
     await addDoc(collection(db, 'todos'), {
       text: value,
-      completed: false
+      completed: false,
+			userid: user.uid
     })
     setValue("")
   }
@@ -35,7 +36,9 @@ export default function Mainapp() {
   // useEffect to synchronise with an external system
   useEffect(() => {
 
-  const q = query(collection(db, 'todos'))
+  const q = query(collection(db, 'todos')
+	, where("userid", "==", user.uid)
+	)
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     let todosArr = []
     querySnapshot.forEach((doc) => {
