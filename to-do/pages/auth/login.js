@@ -1,10 +1,9 @@
 import { FcGoogle } from "react-icons/fc"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { db, auth } from "@/firebase";
+import { auth } from "@/firebase";
 import { useRouter } from "next/router";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { addDoc, collection } from "firebase/firestore";
 
 export default function Login() {
     const [user] = useAuthState(auth)
