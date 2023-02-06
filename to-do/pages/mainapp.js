@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Todo from '../components/todo'
 import { db } from '@/firebase'
-import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc } from 'firebase/firestore'
+import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc, getDoc } from 'firebase/firestore'
 import { auth } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
@@ -11,13 +11,51 @@ export default function Mainapp() {
 	const [user, loading] = useAuthState(auth);
 	const route = useRouter()
 
-	if (loading) return <h1>Loading...</h1>
-	if (!user) route.push("/auth/login")
-	
 	const [todos, setTodos] = useState([])
 
-  const [showInputEl, setShowInputEl] = useState(false)
+	const [showInputEl, setShowInputEl] = useState(false)
   const [value, setValue] = useState("")
+
+	// Read todo from firebase
+  // useEffect to synchronise with an external system
+  useEffect(() => {
+
+		if (!user) route.push("/auth/login")
+
+    // const userq = query(collection(db, 'users'), where("userid", "==", user.uid))
+    // const user_unsubscribe = onSnapshot(userq, (querySnapshot) => {
+    //   let userExist = false
+    //   let userArr = []
+    //   querySnapshot.forEach((doc) => {
+    //     userArr.push({...doc.data(), id: doc.id})
+		// 	})
+    //     if (doc.userid === user.uid) {
+    //       // User already registered profile
+    //       console.log(`User profile already exists`)
+    //       userExist = true
+    //     }
+    //   })
+
+    //   if (userExist === false) {
+    //     console.log(`User profile added for ${user.displayName}`)
+    //     addUserProfile()
+    //   }
+
+    //   })
+
+		const q = query(collection(db, 'todos'), where("userid", "==", user.uid))
+		const unsubscribe = onSnapshot(q, (querySnapshot) => {
+			let todosArr = []
+			querySnapshot.forEach((doc) => {
+				todosArr.push({...doc.data(), id: doc.id})
+			})
+			console.log(todosArr)
+			setTodos(todosArr)
+		})
+		return () => {unsubscribe}
+		}, [])
+	
+	if (loading) return <h1>Loading...</h1>
 
   // Create todo
 
@@ -32,29 +70,23 @@ export default function Mainapp() {
     setValue("")
   }
 
-  // Read todo from firebase
-  // useEffect to synchronise with an external system
-  useEffect(() => {
-
-  const q = query(collection(db, 'todos')
-	, where("userid", "==", user.uid)
-	)
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    let todosArr = []
-    querySnapshot.forEach((doc) => {
-      todosArr.push({...doc.data(), id: doc.id})
-    })
-    console.log(todosArr)
-    setTodos(todosArr)
-  })
-  return () => unsubscribe
-  }, [])
-
   // Delete todo 
   const deleteTodo = async (id) => {
     await deleteDoc(doc(db, 'todos', id))
   }
 
+  const addUserProfile = async () => {
+        
+    await addDoc(collection(db, 'users'), {
+      firstname: user.displayName,
+      lastname: "",
+      userid: user.uid,
+      title: "",
+      desc: "",
+      company: ""
+    })
+    console.log(`Profile created for ${user.displayName}`)
+  }
 
   return (
     <>
@@ -75,7 +107,7 @@ export default function Mainapp() {
           {/* Form input to add To-do */}
           <div className='mx-auto my-3'>
             <form onSubmit={createToDo} className='flex flex-col items-center gap-3'>
-              <input className='placeholder:font-mono placeholder:text-center p-2 mb-2' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
+              <input className='placeholder:font-mono placeholder:text-center p-2 mb-2 text-center' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
               <button className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3' type='submit'>Submit</button>
             </form>
           </div>
