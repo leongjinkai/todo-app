@@ -20,15 +20,6 @@ export default function Login() {
         }
     }
 
-    // If user is not logged in and comes to this page, they get routed
-    useEffect(() => {
-        if (user) {
-            route.push('/mainapp')
-        } else {
-            console.log('login')
-        }
-    }, [user])
-
     return (
         <div className="flex flex-col shadow-2xl rounded-xl p-10 gap-8 w-[80vw] bg-white">
             <h2 className="text-3xl font-bold">Join Today</h2>

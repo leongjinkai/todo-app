@@ -2,10 +2,13 @@ import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Todo from '../components/todo'
 import { db } from '@/firebase'
-import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc, getDoc } from 'firebase/firestore'
+import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc, getDoc, setDoc } from 'firebase/firestore'
 import { auth } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
+import { onAuthStateChanged } from 'firebase/auth'
+
+const userArr = []
 
 export default function Mainapp() {
 	const [user, loading] = useAuthState(auth);
@@ -16,33 +19,59 @@ export default function Mainapp() {
 	const [showInputEl, setShowInputEl] = useState(false)
   const [value, setValue] = useState("")
 
+
+  // Route user to login page if not logged in
+	onAuthStateChanged(auth, (user) => {
+		if (user) {
+			console.log(`${user.displayName}'s todolist is shown`)
+
+		} else {
+    useEffect(() => {
+      route.push('/auth/login')
+    })
+    console.log(`redirected to login`)
+		}
+	  });	
+
 	// Read todo from firebase
   // useEffect to synchronise with an external system
+
   useEffect(() => {
 
-		if (!user) route.push("/auth/login")
+    // Attempt to unnest the nested document object
+    const userq = query(collection(db, 'users'))
+		const user_unsubscribe = onSnapshot(userq, (querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				userArr.push({id: doc.id})
+        console.log(`${doc.id}`)
+			})
+		})
 
-    // const userq = query(collection(db, 'users'), where("userid", "==", user.uid))
-    // const user_unsubscribe = onSnapshot(userq, (querySnapshot) => {
-    //   let userExist = false
-    //   let userArr = []
-    //   querySnapshot.forEach((doc) => {
-    //     userArr.push({...doc.data(), id: doc.id})
-		// 	})
-    //     if (doc.userid === user.uid) {
-    //       // User already registered profile
-    //       console.log(`User profile already exists`)
-    //       userExist = true
-    //     }
-    //   })
+    // Add userprofile
+    const addUserProfile = async () => {
+      
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef)
+      const doesDocExist = docSnap.exists();
+      
+      console.log(`Document exist: ${doesDocExist}`)
+      
+      if (!doesDocExist) {
+        await setDoc(doc(db, 'users', user.uid), {
+          firstname: user.displayName,
+          lastname: "",
+          userid: user.uid,
+          title: "",
+          desc: "",
+          company: ""
+        })
+        console.log(`Profile created for ${user.displayName}`)
+      } else {
+        console.log(`User profile already exists`)
+      }
+    }
 
-    //   if (userExist === false) {
-    //     console.log(`User profile added for ${user.displayName}`)
-    //     addUserProfile()
-    //   }
-
-    //   })
-
+    // Show the todo list
 		const q = query(collection(db, 'todos'), where("userid", "==", user.uid))
 		const unsubscribe = onSnapshot(q, (querySnapshot) => {
 			let todosArr = []
@@ -52,7 +81,8 @@ export default function Mainapp() {
 			console.log(todosArr)
 			setTodos(todosArr)
 		})
-		return () => {unsubscribe}
+
+		return () => {unsubscribe, user_unsubscribe, addUserProfile}
 		}, [])
 	
 	if (loading) return <h1>Loading...</h1>
@@ -61,7 +91,7 @@ export default function Mainapp() {
 
   const createToDo = async (e) => {
     e.preventDefault(e)
-    
+
     await addDoc(collection(db, 'todos'), {
       text: value,
       completed: false,
@@ -73,19 +103,6 @@ export default function Mainapp() {
   // Delete todo 
   const deleteTodo = async (id) => {
     await deleteDoc(doc(db, 'todos', id))
-  }
-
-  const addUserProfile = async () => {
-        
-    await addDoc(collection(db, 'users'), {
-      firstname: user.displayName,
-      lastname: "",
-      userid: user.uid,
-      title: "",
-      desc: "",
-      company: ""
-    })
-    console.log(`Profile created for ${user.displayName}`)
   }
 
   return (
@@ -141,3 +158,13 @@ export default function Mainapp() {
   )
 }
 
+export function getAllUserNames() {
+  return (userArr.forEach((user) => {
+    return { 
+      params: user
+  }}))
+}
+
+export function getUserData (id) {
+  return {id}
+}
