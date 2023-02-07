@@ -34,10 +34,12 @@ export default function ProfilePage( {userData}) {
 	)
 }
 
-export async function getStaticPaths() {
-	const paths = getAllUserNames();
+export async function getStaticPaths(
+) {
+	const userPaths = getAllUserNames();
+	console.log(userPaths)
 	return {
-	  paths,
+	  paths: userPaths,
 	  fallback: false,
 	};
 }

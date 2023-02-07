@@ -8,8 +8,6 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 
-const userArr = []
-
 export default function Mainapp() {
 	const [user, loading] = useAuthState(auth);
 	const route = useRouter()
@@ -26,27 +24,15 @@ export default function Mainapp() {
 			console.log(`${user.displayName}'s todolist is shown`)
 
 		} else {
-    useEffect(() => {
       route.push('/auth/login')
-    })
-    console.log(`redirected to login`)
-		}
+      console.log(`redirected to login`)
+    }
 	  });	
 
 	// Read todo from firebase
   // useEffect to synchronise with an external system
 
   useEffect(() => {
-
-    // Attempt to unnest the nested document object
-    const userq = query(collection(db, 'users'))
-		const user_unsubscribe = onSnapshot(userq, (querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				userArr.push({id: doc.id})
-        console.log(`${doc.id}`)
-			})
-		})
-
     // Add userprofile
     const addUserProfile = async () => {
       
@@ -72,17 +58,18 @@ export default function Mainapp() {
     }
 
     // Show the todo list
-		const q = query(collection(db, 'todos'), where("userid", "==", user.uid))
-		const unsubscribe = onSnapshot(q, (querySnapshot) => {
+
+		const unsubscribe = () => {
+      const q = query(collection(db, 'todos'), where("userid", "==", user.uid))
+      onSnapshot(q, (querySnapshot) => {
 			let todosArr = []
 			querySnapshot.forEach((doc) => {
 				todosArr.push({...doc.data(), id: doc.id})
 			})
-			console.log(todosArr)
 			setTodos(todosArr)
-		})
+		})}
 
-		return () => {unsubscribe, user_unsubscribe, addUserProfile}
+		return () => {unsubscribe, addUserProfile}
 		}, [])
 	
 	if (loading) return <h1>Loading...</h1>
@@ -159,10 +146,22 @@ export default function Mainapp() {
 }
 
 export function getAllUserNames() {
-  return (userArr.forEach((user) => {
-    return { 
-      params: user
-  }}))
+  const userArr = []
+  const finalArr = []
+  // Attempt to unnest the nested document object
+  const userq = query(collection(db, 'users'))
+  const user_unsubscribe = onSnapshot(userq, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      userArr.push({id: doc.id})
+    })
+  })
+
+  user_unsubscribe()
+
+  userArr.forEach((user) => {
+    finalArr.push({params: user})
+  })
+  return finalArr 
 }
 
 export function getUserData (id) {
