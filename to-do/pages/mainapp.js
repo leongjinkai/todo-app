@@ -7,6 +7,7 @@ import { auth } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
+import Addtodo from '../components/addtodo'
 
 export default function Mainapp() {
 	const [user, loading] = useAuthState(auth);
@@ -14,6 +15,11 @@ export default function Mainapp() {
 
 	const [todos, setTodos] = useState([])
   const [value, setValue] = useState("")
+  const [desc, setDesc] = useState("")
+  const [deadline, setDeadline] = useState("")
+  const [priority, setPriority] = useState("")
+
+  const [showAddTodo, setShowAddTodo] = useState(false)
   // Route user to login page if not logged in
 	useEffect(() => {
     let unsubscribe
@@ -86,15 +92,26 @@ export default function Mainapp() {
 
     await addDoc(collection(db, 'todos'), {
       text: value,
+      desc: desc,
+      deadline: deadline,
+      priority: priority,
       completed: false,
 			userid: user.uid
     })
     setValue("")
+    setDesc("")
+    setDeadline("")
+    setPriority("")
+    setShowAddTodo(false)
   }
 
   // Delete todo 
   const deleteTodo = async (id) => {
     await deleteDoc(doc(db, 'todos', id))
+  }
+
+  const handleClick = () => {
+    setShowAddTodo(true)
   }
 
   return (
@@ -106,6 +123,7 @@ export default function Mainapp() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <Addtodo value={value} setValue={setValue} desc={desc} setDesc={setDesc} deadline={deadline} setDeadline={setDeadline} priority={priority} setPriority={setPriority} createToDo={createToDo} showAddTodo={showAddTodo} setShowAddTodo={setShowAddTodo}/>
         {/* Background */}
         <div className='bg-gradient-to-br from-cyan-500 to-blue-500 flex flex-col justify-center min-h-screen w-screen'>
           {/* header */}
@@ -115,10 +133,7 @@ export default function Mainapp() {
 
           {/* Form input to add To-do */}
           <div className='mx-auto my-3'>
-            <form onSubmit={createToDo} className='flex flex-col items-center gap-3'>
-              <input className='placeholder:font-mono placeholder:text-center p-2 mb-2 text-center rounded-xl' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
-              <button className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3' type='submit'>Submit</button>
-            </form>
+              <button onClick={handleClick} className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3'>Add New Task</button>
           </div>
 
           {/* To-do List */}

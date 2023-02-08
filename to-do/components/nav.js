@@ -7,7 +7,7 @@ export default function Nav() {
     
     const router = useRouter()
 
-    const [user, loading] = useAuthState(auth)
+    const [user] = useAuthState(auth)
 
     return (
         <nav className="fixed flex justify-between items-center w-[80vw] py-5 mx-auto">
