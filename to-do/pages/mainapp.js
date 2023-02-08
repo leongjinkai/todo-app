@@ -16,61 +16,68 @@ export default function Mainapp() {
 
 	const [showInputEl, setShowInputEl] = useState(false)
   const [value, setValue] = useState("")
-
-
   // Route user to login page if not logged in
-	onAuthStateChanged(auth, (user) => {
-		if (user) {
-			console.log(`${user.displayName}'s todolist is shown`)
+	useEffect(() => {
+    let unsubscribe
 
-		} else {
-      route.push('/auth/login')
-      console.log(`redirected to login`)
-    }
-	  });	
-
-	// Read todo from firebase
-  // useEffect to synchronise with an external system
-
-  useEffect(() => {
-    // Add userprofile
-    const addUserProfile = async () => {
-      
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef)
-      const doesDocExist = docSnap.exists();
-      
-      console.log(`Document exist: ${doesDocExist}`)
-      
-      if (!doesDocExist) {
-        await setDoc(doc(db, 'users', user.uid), {
-          firstname: user.displayName,
-          lastname: "",
-          userid: user.uid,
-          title: "",
-          desc: "",
-          company: ""
-        })
-        console.log(`Profile created for ${user.displayName}`)
-      } else {
-        console.log(`User profile already exists`)
-      }
-    }
-
-    // Show the todo list
-
-		const unsubscribe = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(`${user.displayName} user is logged in`)
+        
+        // Show the todo list
+		unsubscribe = () => {
       const q = query(collection(db, 'todos'), where("userid", "==", user.uid))
+
       onSnapshot(q, (querySnapshot) => {
 			let todosArr = []
 			querySnapshot.forEach((doc) => {
 				todosArr.push({...doc.data(), id: doc.id})
 			})
+      console.log(todosArr)
 			setTodos(todosArr)
 		})}
 
-		return () => {unsubscribe, addUserProfile}
-		}, [])
+    unsubscribe()
+        
+      } else {
+        route.push('/auth/login')
+        console.log(`redirected to login`)
+      }
+      });	
+  }, [])
+
+	// Read todo from firebase
+  // useEffect to synchronise with an external system
+
+  // useEffect(() => {
+    // // Add userprofile
+    // const addUserProfile = async () => {
+      
+    //   const docRef = doc(db, "users", user.uid);
+    //   const docSnap = await getDoc(docRef)
+    //   const doesDocExist = docSnap.exists();
+      
+    //   console.log(`Document exist: ${doesDocExist}`)
+      
+    //   if (!doesDocExist) {
+    //     await setDoc(doc(db, 'users', user.uid), {
+    //       firstname: user.displayName,
+    //       lastname: "",
+    //       userid: user.uid,
+    //       title: "",
+    //       desc: "",
+    //       company: ""
+    //     })
+    //     console.log(`Profile created for ${user.displayName}`)
+    //   } else {
+    //     console.log(`User profile already exists`)
+    //   }
+    // }
+
+    
+
+		// return () => {unsubscribe}
+		// }, [])
 	
 	if (loading) return <h1>Loading...</h1>
 
@@ -145,6 +152,7 @@ export default function Mainapp() {
   )
 }
 
+
 export function getAllUserNames() {
   const userArr = []
   const finalArr = []
@@ -165,5 +173,6 @@ export function getAllUserNames() {
 }
 
 export function getUserData (id) {
+
   return {id}
 }
