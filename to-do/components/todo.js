@@ -71,8 +71,18 @@ export default function Todo({todo, todos, setTodos, deleteTodo}) {
             {
                 click && 
                     (
-                        <div className=" bg-slate-500 text-white py-3 px-3 md:px-5 mt-0 mb-2 rounded-xl w-[80vw] max-w-lg shadow-lg mx-auto text-xs md:text-lg">
-                            More information on the task
+                        <div className="flex gap-8 bg-slate-500 text-white py-3 px-3 md:px-5 mt-0 mb-2 rounded-xl w-[80vw] max-w-lg shadow-lg mx-auto text-xs md:text-lg">
+                            <div>
+                                <p>Description:</p>
+                                <p>Deadline:</p>
+                                <p>Priority</p>
+                            </div>
+                            <div>
+                                <p>{todo.desc}</p>
+                                <p>{todo.deadline}</p>
+                                <p>{todo.priority}</p>
+                            </div>
+                            
                         </div>
                     )
             }

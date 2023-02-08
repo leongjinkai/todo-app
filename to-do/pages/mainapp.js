@@ -133,7 +133,7 @@ export default function Mainapp() {
 
           {/* Form input to add To-do */}
           <div className='mx-auto my-3'>
-              <button onClick={handleClick} className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3'>Add New Task</button>
+              <button onClick={handleClick} className='animate-bounce bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3'>Add New Task</button>
           </div>
 
           {/* To-do List */}

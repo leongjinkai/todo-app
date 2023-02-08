@@ -1,4 +1,4 @@
-export default function Addtodo({value, setValue, desc, setDesc, deadline, setDeadline, priority, setPriority, createToDo, showAddTodo, setShowAddTodo}) {
+export default function Addtodo({setValue, setDesc, setDeadline, setPriority, createToDo, showAddTodo, setShowAddTodo}) {
     const handleExit = () => {
         setShowAddTodo(false)
     }    
@@ -6,7 +6,7 @@ export default function Addtodo({value, setValue, desc, setDesc, deadline, setDe
     if (showAddTodo) {
             return (
         <div className="text-lg font-mono block:flex flex-col gap-3 fixed text-white bg-[#c60f7b] top-[50%] rounded-xl left-[50%] w-72 h-100 translate-x-[-50%] translate-y-[-50%] p-5 shadow-md shadow-black">
-            <button onClick={handleExit} className="fixed top-[8%] left-[88%] translate-x-[-50%] translate-y-[-20%] z-10 border-2 border-white rounded-full w-8 h-7 pb-7">X</button>
+            <button onClick={handleExit} className="hover:text-[#ff57b9] hover:bg-black fixed top-[7%] left-[88%] translate-x-[-50%] translate-y-[-20%] z-10 border-2 border-white rounded-full w-8 h-7 pb-7">X</button>
             <p className="mx-auto mb-4 text-xl">New Task</p>
             <div>
                 <form onSubmit={createToDo} className="flex flex-col gap-1 " action="#">
