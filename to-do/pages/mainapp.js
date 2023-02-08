@@ -110,13 +110,13 @@ export default function Mainapp() {
         <div className='bg-gradient-to-br from-cyan-500 to-blue-500 flex flex-col justify-center min-h-screen w-screen'>
           {/* header */}
           <div className='mx-auto font-mono text-2xl m-5 pt-12'>
-            <p className='font-bold text-center text-7xl'>JinKai's</p><p className='text-center mt-2'>To-do App</p>
+            <p className='font-bold text-center md:text-7xl text-6xl'>JinKai's</p><p className='text-center mt-2'>To-do App</p>
           </div>
 
           {/* Form input to add To-do */}
           <div className='mx-auto my-3'>
             <form onSubmit={createToDo} className='flex flex-col items-center gap-3'>
-              <input className='placeholder:font-mono placeholder:text-center p-2 mb-2 text-center' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
+              <input className='placeholder:font-mono placeholder:text-center p-2 mb-2 text-center rounded-xl' required type="text" placeholder='Add task here' value={value} onChange={(e) => setValue(e.target.value)}/>
               <button className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3' type='submit'>Submit</button>
             </form>
           </div>

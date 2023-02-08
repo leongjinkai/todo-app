@@ -26,7 +26,7 @@ export default function Nav() {
                             router.push("/auth/login")
                         }}>Sign out</button>
                     )}
-                    <h2 className="text-sm">{user.displayName}</h2>
+                    <h2 className="text-sm hidden md:block">{user.displayName}</h2>
                     <div className="relative hover:block z-10 flex flex-col items-center">
                         <Link href={"/mainapp"} className="peer">
                             <img className="rounded-full w-12" src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
