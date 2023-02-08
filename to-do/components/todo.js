@@ -2,7 +2,7 @@ import { db } from "@/firebase"
 import { doc, updateDoc } from "firebase/firestore"
 import { useState } from "react"
 
-export default function Todo({todo, todos, setTodos, deleteTodo}) {
+export default function Todo({todo, todos, setTodos, deleteTodo, dragStart, index, dragEnter, drop}) {
     const [click, setClick] = useState(false)
     const [showInputEl, setShowInputEl] = useState(false)
 
@@ -29,7 +29,8 @@ export default function Todo({todo, todos, setTodos, deleteTodo}) {
 
     return (
         <div className="flex flex-col items-center">
-            <div className="flex justify-between bg-white py-3 md:px-5 px-3 m-2 rounded-xl w-[80vw] max-w-lg shadow-lg mx-auto">
+            <div className="flex justify-between bg-white py-3 md:px-5 px-3 m-2 rounded-xl w-[80vw] max-w-lg shadow-lg mx-auto" 
+            draggable onDragStart={(e) => dragStart(e, index)} onDragEnter={(e) => dragEnter(e, index)} onDragEnd={drop}>
                 <div className="flex items-center text-xs md:text-base">
                     <span className="break-words overflow-y-auto" style={{textDecoration: todo.completed ? "line-through" : ""}}>
                         {showInputEl ? (

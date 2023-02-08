@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Todo from '../components/todo'
 import { db } from '@/firebase'
 import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc, getDoc, setDoc } from 'firebase/firestore'
@@ -18,6 +18,9 @@ export default function Mainapp() {
   const [desc, setDesc] = useState("")
   const [deadline, setDeadline] = useState("")
   const [priority, setPriority] = useState("")
+
+  const dragItem = useRef();
+  const dragOverItem = useRef();
 
   const [showAddTodo, setShowAddTodo] = useState(false)
   // Route user to login page if not logged in
@@ -38,6 +41,7 @@ export default function Mainapp() {
 				todosArr.push({...doc.data(), id: doc.id})
 			})
       console.log(todosArr)
+      todosArr.reverse()
 			setTodos(todosArr)
 		})}
 
@@ -114,6 +118,28 @@ export default function Mainapp() {
     setShowAddTodo(true)
   }
 
+  // Creating drag and drop element
+
+  const dragStart = (e, position) => {
+    dragItem.current = position;
+    console.log(e.target.innerHTML);
+  };
+
+  const dragEnter = (e, position) => {
+    dragOverItem.current = position;
+    console.log(e.target.innerHTML);
+  };
+
+  const drop = (e) => {
+    const copyListItems = [...todos];
+    const dragItemContent = copyListItems[dragItem.current];
+    copyListItems.splice(dragItem.current, 1);
+    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setTodos(copyListItems);
+  };
+
   return (
     <>
       <Head>
@@ -133,7 +159,7 @@ export default function Mainapp() {
 
           {/* Form input to add To-do */}
           <div className='mx-auto my-3'>
-              <button onClick={handleClick} className='animate-bounce bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3'>Add New Task</button>
+              <button onClick={handleClick} className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3'>Add New Task</button>
           </div>
 
           {/* To-do List */}
@@ -145,6 +171,9 @@ export default function Mainapp() {
               todos={todos}
               setTodos={setTodos}
               deleteTodo={deleteTodo}
+              dragStart={dragStart}
+              dragEnter={dragEnter}
+              drop={drop}
               />
           ))}
           <div>
