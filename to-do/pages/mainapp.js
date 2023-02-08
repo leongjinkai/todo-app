@@ -13,8 +13,6 @@ export default function Mainapp() {
 	const route = useRouter()
 
 	const [todos, setTodos] = useState([])
-
-	const [showInputEl, setShowInputEl] = useState(false)
   const [value, setValue] = useState("")
   // Route user to login page if not logged in
 	useEffect(() => {
@@ -131,8 +129,6 @@ export default function Mainapp() {
               index={index}
               todos={todos}
               setTodos={setTodos}
-              showInputEl={showInputEl}
-              setShowInputEl={setShowInputEl}
               deleteTodo={deleteTodo}
               />
           ))}
