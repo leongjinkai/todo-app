@@ -32,8 +32,8 @@ export default function Nav() {
                             <img className="rounded-full w-12" src={user.photoURL} alt="avatar" referrerPolicy="no-referrer" />
                         </Link>
                         <div className="hidden absolute peer-hover:flex hover:flex flex-col justify-center gap-2 items-center h-[120px]">
-                            <Link href={`./profile/${user.id}`} className="block bg-[#ffba08] text-sm rounded-full w-12 h-12 text-center pt-3">Profile</Link>
-                            <a className="block bg-[#ffba08] text-sm rounded-full w-12 h-12 text-center leading-4 pt-2" href="#">Sign out</a>
+                            <Link href={`./profile/${user.displayName.toLowerCase().replaceAll(" ", "")}`} className=" text-bold block text-white bg-[#c60f7b] text-sm rounded-full w-12 h-12 text-center pt-3">Profile</Link>
+                            <a className="text-bold block text-white bg-[#c60f7b] text-sm rounded-full w-12 h-12 text-center leading-4 pt-2" href="#">Sign out</a>
                         </div>
                     </div>
                     

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect, useRef } from 'react'
 import Todo from '../components/todo'
 import { db } from '@/firebase'
-import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc, getDoc, setDoc } from 'firebase/firestore'
+import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc} from 'firebase/firestore'
 import { auth } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
@@ -37,11 +37,17 @@ export default function Mainapp() {
 
       onSnapshot(q, (querySnapshot) => {
 			let todosArr = []
+      let userArr = []
+      let finalArr = []
 			querySnapshot.forEach((doc) => {
 				todosArr.push({...doc.data(), id: doc.id})
+        userArr.push({ id: doc.data()['user'].replaceAll(" ", "").toLowerCase()})
 			})
+      userArr.forEach((user) => {
+        finalArr.push({params: user})
+      })
+      console.log(finalArr)
       console.log(todosArr)
-      todosArr.reverse()
 			setTodos(todosArr)
 		})}
 
@@ -100,7 +106,8 @@ export default function Mainapp() {
       deadline: deadline,
       priority: priority,
       completed: false,
-			userid: user.uid
+			userid: user.uid,
+      user: user.displayName
     })
     setValue("")
     setDesc("")
@@ -193,26 +200,6 @@ export default function Mainapp() {
 }
 
 
-export function getAllUserNames() {
-  const userArr = []
-  const finalArr = []
-  // Attempt to unnest the nested document object
-  const userq = query(collection(db, 'users'))
-  const user_unsubscribe = onSnapshot(userq, (querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      userArr.push({id: doc.id})
-    })
-  })
-
-  user_unsubscribe()
-
-  userArr.forEach((user) => {
-    finalArr.push({params: user})
-  })
-  return finalArr 
-}
-
 export function getUserData (id) {
-
   return {id}
 }
