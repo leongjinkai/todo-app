@@ -8,6 +8,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import Addtodo from '../components/addtodo'
+import { motion } from 'framer-motion'
 
 export default function Mainapp() {
 	const [user, loading] = useAuthState(auth);
@@ -161,7 +162,8 @@ export default function Mainapp() {
         <div className='bg-gradient-to-br from-cyan-500 to-blue-500 flex flex-col justify-center min-h-screen w-screen'>
           {/* header */}
           <div className='mx-auto font-mono text-2xl m-5 pt-12'>
-            <p className='font-bold text-center md:text-7xl text-6xl'>JinKai's</p><p className='text-center mt-2'>To-do App</p>
+            <p className='font-bold text-center md:text-7xl text-6xl'>JinKai's</p>
+            <p className='text-center mt-2'>To-do App</p>
           </div>
 
           {/* Form input to add To-do */}
