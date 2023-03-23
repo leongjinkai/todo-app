@@ -1,130 +1,140 @@
-import Head from 'next/head'
-import { useState, useEffect, useRef } from 'react'
-import Todo from '../components/todo'
-import { db } from '@/firebase'
-import { where, query, doc, collection, onSnapshot, addDoc, deleteDoc} from 'firebase/firestore'
-import { auth } from '@/firebase'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { useRouter } from 'next/router'
-import { onAuthStateChanged } from 'firebase/auth'
-import Addtodo from '../components/addtodo'
-import { motion } from 'framer-motion'
+import Head from "next/head";
+import { useState, useEffect, useRef } from "react";
+import Todo from "../components/todo";
+import { db } from "@/firebase";
+import {
+  where,
+  query,
+  doc,
+  collection,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { auth } from "@/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/router";
+import { onAuthStateChanged } from "firebase/auth";
+import Addtodo from "../components/addtodo";
 
 export default function Mainapp() {
-	const [user, loading] = useAuthState(auth);
-	const route = useRouter()
+  const [user, loading] = useAuthState(auth);
+  const route = useRouter();
 
-	const [todos, setTodos] = useState([])
-  const [value, setValue] = useState("")
-  const [desc, setDesc] = useState("")
-  const [deadline, setDeadline] = useState("")
-  const [priority, setPriority] = useState("")
+  const [todos, setTodos] = useState([]);
+  const [value, setValue] = useState("");
+  const [desc, setDesc] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [priority, setPriority] = useState("");
 
   const dragItem = useRef();
   const dragOverItem = useRef();
 
-  const [showAddTodo, setShowAddTodo] = useState(false)
+  const [showAddTodo, setShowAddTodo] = useState(false);
   // Route user to login page if not logged in
-	useEffect(() => {
-    let unsubscribe
+  useEffect(() => {
+    let unsubscribe;
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(`${user.displayName} user is logged in`)
-        
+        console.log(`${user.displayName} user is logged in`);
+
         // Show the todo list
-		unsubscribe = () => {
-      const q = query(collection(db, 'todos'), where("userid", "==", user.uid))
+        unsubscribe = () => {
+          const q = query(
+            collection(db, "todos"),
+            where("userid", "==", user.uid)
+          );
 
-      onSnapshot(q, (querySnapshot) => {
-			let todosArr = []
-      let userArr = []
-      let finalArr = []
-			querySnapshot.forEach((doc) => {
-				todosArr.push({...doc.data(), id: doc.id})
-        userArr.push({ id: doc.data()['user'].replaceAll(" ", "").toLowerCase()})
-			})
-      userArr.forEach((user) => {
-        finalArr.push({params: user})
-      })
-      console.log(finalArr)
-      console.log(todosArr)
-			setTodos(todosArr)
-		})}
+          onSnapshot(q, (querySnapshot) => {
+            let todosArr = [];
+            let userArr = [];
+            let finalArr = [];
+            querySnapshot.forEach((doc) => {
+              todosArr.push({ ...doc.data(), id: doc.id });
+              userArr.push({
+                id: doc.data()["user"].replaceAll(" ", "").toLowerCase(),
+              });
+            });
+            userArr.forEach((user) => {
+              finalArr.push({ params: user });
+            });
+            console.log(finalArr);
+            console.log(todosArr);
+            setTodos(todosArr);
+          });
+        };
 
-    unsubscribe()
-        
+        unsubscribe();
       } else {
-        route.push('/auth/login')
-        console.log(`redirected to login`)
+        route.push("/auth/login");
+        console.log(`redirected to login`);
       }
-      });	
-  }, [])
+    });
+  }, []);
 
-	// Read todo from firebase
+  // Read todo from firebase
   // useEffect to synchronise with an external system
 
   // useEffect(() => {
-    // // Add userprofile
-    // const addUserProfile = async () => {
-      
-    //   const docRef = doc(db, "users", user.uid);
-    //   const docSnap = await getDoc(docRef)
-    //   const doesDocExist = docSnap.exists();
-      
-    //   console.log(`Document exist: ${doesDocExist}`)
-      
-    //   if (!doesDocExist) {
-    //     await setDoc(doc(db, 'users', user.uid), {
-    //       firstname: user.displayName,
-    //       lastname: "",
-    //       userid: user.uid,
-    //       title: "",
-    //       desc: "",
-    //       company: ""
-    //     })
-    //     console.log(`Profile created for ${user.displayName}`)
-    //   } else {
-    //     console.log(`User profile already exists`)
-    //   }
-    // }
+  // // Add userprofile
+  // const addUserProfile = async () => {
 
-    
+  //   const docRef = doc(db, "users", user.uid);
+  //   const docSnap = await getDoc(docRef)
+  //   const doesDocExist = docSnap.exists();
 
-		// return () => {unsubscribe}
-		// }, [])
-	
-	if (loading) return <h1>Loading...</h1>
+  //   console.log(`Document exist: ${doesDocExist}`)
+
+  //   if (!doesDocExist) {
+  //     await setDoc(doc(db, 'users', user.uid), {
+  //       firstname: user.displayName,
+  //       lastname: "",
+  //       userid: user.uid,
+  //       title: "",
+  //       desc: "",
+  //       company: ""
+  //     })
+  //     console.log(`Profile created for ${user.displayName}`)
+  //   } else {
+  //     console.log(`User profile already exists`)
+  //   }
+  // }
+
+  // return () => {unsubscribe}
+  // }, [])
+
+  if (loading) return <h1>Loading...</h1>;
 
   // Create todo
 
   const createToDo = async (e) => {
-    e.preventDefault(e)
+    e.preventDefault(e);
 
-    await addDoc(collection(db, 'todos'), {
+    await addDoc(collection(db, "todos"), {
       text: value,
       desc: desc,
       deadline: deadline,
       priority: priority,
       completed: false,
-			userid: user.uid,
-      user: user.displayName
-    })
-    setValue("")
-    setDesc("")
-    setDeadline("")
-    setPriority("")
-    setShowAddTodo(false)
-  }
+      userid: user.uid,
+      user: user.displayName,
+    });
+    setValue("");
+    setDesc("");
+    setDeadline("");
+    setPriority("");
+    setShowAddTodo(false);
+  };
 
-  // Delete todo 
+  // Delete todo
   const deleteTodo = async (id) => {
-    await deleteDoc(doc(db, 'todos', id))
-  }
+    await deleteDoc(doc(db, "todos", id));
+  };
 
   const handleClick = () => {
-    setShowAddTodo(true)
-  }
+    setShowAddTodo(true);
+  };
 
   // Creating drag and drop element
 
@@ -157,23 +167,42 @@ export default function Mainapp() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Addtodo value={value} setValue={setValue} desc={desc} setDesc={setDesc} deadline={deadline} setDeadline={setDeadline} priority={priority} setPriority={setPriority} createToDo={createToDo} showAddTodo={showAddTodo} setShowAddTodo={setShowAddTodo}/>
+        <Addtodo
+          value={value}
+          setValue={setValue}
+          desc={desc}
+          setDesc={setDesc}
+          deadline={deadline}
+          setDeadline={setDeadline}
+          priority={priority}
+          setPriority={setPriority}
+          createToDo={createToDo}
+          showAddTodo={showAddTodo}
+          setShowAddTodo={setShowAddTodo}
+        />
         {/* Background */}
-        <div className='bg-gradient-to-br from-cyan-500 to-blue-500 flex flex-col justify-center min-h-screen w-screen'>
+        <div className="bg-gradient-to-br from-cyan-500 to-blue-500 flex flex-col justify-center min-h-screen w-screen">
           {/* header */}
-          <div className='mx-auto font-mono text-2xl m-5 pt-12'>
-            <p className='font-bold text-center md:text-7xl text-6xl'>JinKai's</p>
-            <p className='text-center mt-2'>To-do App</p>
+          <div className="mx-auto font-mono text-2xl m-5 pt-12">
+            <p className="font-bold text-center md:text-7xl text-6xl">
+              JinKai's
+            </p>
+            <p className="text-center mt-2">To-do App</p>
           </div>
 
           {/* Form input to add To-do */}
-          <div className='mx-auto my-3'>
-              <button onClick={handleClick} className='bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3'>Add New Task</button>
+          <div className="mx-auto my-3">
+            <button
+              onClick={handleClick}
+              className="bg-cyan-800 hover:bg-cyan-500 text-white p-3 rounded-lg font-mono mb-3"
+            >
+              Add New Task
+            </button>
           </div>
 
           {/* To-do List */}
           {todos.map((todo, index) => (
-            <Todo 
+            <Todo
               key={index}
               todo={todo}
               index={index}
@@ -183,25 +212,27 @@ export default function Mainapp() {
               dragStart={dragStart}
               dragEnter={dragEnter}
               drop={drop}
-              />
+            />
           ))}
           <div>
-            {todos.length === 0 ? 
-              <div className='text-center font-mono my-2'>
-                Hurray!! You have completed all your tasks!<br/>You can add a task above by entering into the text field
-              </div>:
-              <div className='text-center font-mono text-white my-2'>
+            {todos.length === 0 ? (
+              <div className="text-center font-mono my-2">
+                Hurray!! You have completed all your tasks!
+                <br />
+                You can add a task above by entering into the text field
+              </div>
+            ) : (
+              <div className="text-center font-mono text-white my-2">
                 You have {todos.length} tasks!
               </div>
-            }
+            )}
           </div>
         </div>
       </main>
     </>
-  )
+  );
 }
 
-
-export function getUserData (id) {
-  return {id}
+export function getUserData(id) {
+  return { id };
 }
