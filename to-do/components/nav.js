@@ -44,7 +44,7 @@ export default function Nav() {
                   referrerPolicy="no-referrer"
                 />
               </Link>
-              <div className="hidden absolute peer-hover:flex hover:flex flex-col justify-center gap-2 items-center h-[120px]">
+              {/* <div className="hidden absolute peer-hover:flex hover:flex flex-col justify-center gap-2 items-center h-[120px]">
                 <Link
                   href={`./profile/${user.displayName
                     .toLowerCase()
@@ -59,7 +59,7 @@ export default function Nav() {
                 >
                   Sign out
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
